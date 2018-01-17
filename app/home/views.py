@@ -1,7 +1,7 @@
 # -*- coding:utf-8 -*-
 from . import home
-from app.models import Music , Resource
-from flask import Flask, request, Response,jsonify
+from app.models import Music, Resource
+from flask import Flask, request, Response, jsonify, render_template,url_for
 import os
 from app import app
 from pprint import pprint
@@ -12,7 +12,7 @@ from app.models import db
 
 @home.route("/")
 def index():
-    return "<h1 style='color:red'>this is home</h1>"
+    return render_template("/home/index.html")
 
 
 def get_file_type(filename):
@@ -38,9 +38,9 @@ def upload():
     file_info = save_file(f)
 
     return jsonify({"status": "success", "data": {"file": f.filename,
-                    "mimetype": f.mimetype,
-                    "uuid": file_info["uuid"]
-                    }})
+                                                  "mimetype": f.mimetype,
+                                                  "uuid": file_info["uuid"]
+                                                  }})
 
 
 def save_file(file):
@@ -94,19 +94,19 @@ def upload_music():
     db.session.add(music)
     db.session.commit()
     return jsonify({
-            "status": "success",
-            "data": {
-                "title": title,
-                "artist": artist,
-                "album": album,
-                "cover": cover,
-                "mp3": mp3,
-                "img": img,
-            }
-            })
+        "status": "success",
+        "data": {
+            "title": title,
+            "artist": artist,
+            "album": album,
+            "cover": cover,
+            "mp3": mp3,
+            "img": img,
+        }
+    })
 
 
 @home.route("/music/list")
 def music_list():
     music_list = [m.to_json() for m in Music.query.all()]
-    return jsonify({"data":music_list})
+    return jsonify({"data": music_list})

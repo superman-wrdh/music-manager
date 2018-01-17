@@ -1,10 +1,86 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>home index</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title>音乐FM</title>
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/stylesheets/style.css') }}">
+	<script src="{{ url_for('static', filename='js/jquery172.js') }}"></script>
+	<style rel="stylesheet">
+		::-webkit-scrollbar {
+			width: 14px;
+			height: 14px;
+		}
+
+		::-webkit-scrollbar-track,
+		::-webkit-scrollbar-thumb {
+			border-radius: 999px;
+			border: 5px solid transparent;
+		}
+
+		::-webkit-scrollbar-track {
+			box-shadow: 1px 1px 5px rgba(0,0,0,.2) inset;
+		}
+
+		::-webkit-scrollbar-thumb {
+			min-height: 20px;
+			background-clip: content-box;
+			box-shadow: 0 0 0 5px rgba(0,0,0,.2) inset;
+		}
+
+		::-webkit-scrollbar-corner {
+			background: transparent;
+		}
+
+		#background {
+			/*background: contain;*/
+
+		}
+	</style>
 </head>
 <body>
-home index
+<center>
+     
+  </center>
+	<div id="background" style="background-repeat: no-repeat"></div>
+	<div id="player">
+		<div class="cover"></div>
+		<div class="ctrl">
+			<div class="tag">
+				<strong>Title</strong>
+				<span class="artist">Artist</span>
+				<span class="album">Album</span>
+			</div>
+			<div class="control">
+				<div class="left">
+					<div class="rewind icon"></div>
+					<div class="playback icon"></div>
+					<div class="fastforward icon"></div>
+				</div>
+				<div class="volume right">
+					<div class="mute icon left"></div>
+					<div class="slider left">
+						<div class="pace"></div>
+					</div>
+				</div>
+			</div>
+			<div class="progress">
+				<div class="slider">
+					<div class="loaded"></div>
+					<div class="pace"></div>
+				</div>
+				<div class="timer left">0:00</div>
+				<div class="right">
+					<div class="repeat icon"></div>
+					<div class="shuffle icon"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<ul id="playlist" style="height: 300px;overflow-y: auto"></ul>
+	<footer>
+		
+	</footer>
+	<script src="{{ url_for('static', filename='js/jquery-ui-1.8.17.custom.min.js') }}"></script>
+	<script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
 </html>
