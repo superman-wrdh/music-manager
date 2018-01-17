@@ -40,6 +40,15 @@ class Resource(db.Model):
     description = db.Column(db.String(255))
     created_time = db.Column(db.DateTime, default=datetime.now())
 
+    def to_json(self):
+        return {
+            "uuid": self.uuid,
+            "name": self.name,
+            "original_file_name": self.original_file_name,
+            "mime_type": self.mime_type,
+            "description": self.description
+        }
+
 
 def create_user():
     user = User(
@@ -56,5 +65,5 @@ def create_table():
 
 
 if __name__ == '__main__':
-    resource = Resource.query.filter_by(uuid="85952bb0-3379-4477-8256-a72d51092350").first()
-    print(resource.uuid)
+    resource = Resource.query.filter_by(uuid="d28c4bc7-99a6-460e-8608-43b8899983e6").first()
+    print(resource.toDict())

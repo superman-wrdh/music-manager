@@ -23,6 +23,7 @@ def get_file_type(filename):
 
 @home.route("/resource/<rid>")
 def get_resource(rid):
+    print("in")
     resource = Resource.query.filter_by(uuid=rid).first()
     basepath = app.config["upload_dir"]
     filepath = os.path.join(basepath, resource.name)
@@ -34,15 +35,10 @@ def get_resource(rid):
 @home.route("/upload", methods=["POST"])
 def upload():
     f = request.files['file']
-    upload_path =app.config["upload_dir"]
-    if not os.path.exists(upload_path):
-        os.makedirs(upload_path)
-        os.chmod(upload_path, "rw")
-    security_name = datetime.strftime(datetime.now(), "%Y%m%d%H%M%S%f")+"-"+str(uuid4())+get_file_type(f.filename)
-    f.save(os.path.join(upload_path, security_name))
+    file_info = save_file(f)
     resource = Resource(
         uuid=str(uuid4()),
-        name=security_name,
+        name=file_info["security_name"],
         original_file_name=f.filename,
         mime_type=f.mimetype,
         created_time=datetime.now()
@@ -52,3 +48,21 @@ def upload():
     return jsonify({"status": "success", "data": {"file": f.filename,
                     "mimetype": f.mimetype
                     }})
+
+
+def save_file(file):
+    upload_path = app.config["upload_dir"]
+    if not os.path.exists(upload_path):
+        os.makedirs(upload_path)
+        os.chmod(upload_path, "rw")
+    security_name = datetime.strftime(datetime.now(), "%Y%m%d%H%M%S%f") + "-" + str(uuid4()) + get_file_type(file.filename)
+    file.save(os.path.join(upload_path, security_name))
+    return {"security_name": security_name, "mimetype": file.mimetype}
+
+
+@home.route("/upload/music")
+def upload_music():
+    file = request.files['file']
+    file_info = save_file(file)
+    form_data = request.get_data()
+    print(form_data)
