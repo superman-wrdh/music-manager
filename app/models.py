@@ -7,6 +7,7 @@ from datetime import datetime
 from app import app
 
 db = SQLAlchemy(app)
+resource_prefix = app.config["resource_api"]
 
 
 # 用户
@@ -28,6 +29,16 @@ class Music(db.Model):
     img = db.Column(db.String(100))
     create_time = db.Column(db.String(100))
     update_time = db.Column(db.String(100))
+
+    def to_json(self):
+        return {
+            "title": self.title,
+            "artist": self.artist,
+            "album": self.album,
+            "cover": resource_prefix+self.cover,
+            "mp3": resource_prefix+self.mp3,
+            "img": resource_prefix+self.img
+        }
 
 
 class Resource(db.Model):
@@ -64,6 +75,15 @@ def create_table():
     db.create_all()
 
 
-if __name__ == '__main__':
+def get():
     resource = Resource.query.filter_by(uuid="d28c4bc7-99a6-460e-8608-43b8899983e6").first()
-    print(resource.toDict())
+    print(resource)
+
+
+def get_music_list():
+    music_list = [m.to_json() for m in Music.query.all()]
+    print(music_list)
+
+
+if __name__ == '__main__':
+    get_music_list()
