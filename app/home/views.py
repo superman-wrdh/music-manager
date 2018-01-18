@@ -1,7 +1,7 @@
 # -*- coding:utf-8 -*-
 from . import home
 from app.models import Music, Resource
-from flask import Flask, request, Response, jsonify, render_template,url_for
+from flask import Flask, request, Response, jsonify, render_template, url_for
 import os
 from app import app
 from pprint import pprint
@@ -23,13 +23,15 @@ def get_file_type(filename):
 
 @home.route("/resource/<rid>")
 def get_resource(rid):
-    print("in")
     resource = Resource.query.filter_by(uuid=rid).first()
-    basepath = app.config["upload_dir"]
-    filepath = os.path.join(basepath, resource.name)
-    local_resource = open(filepath, "rb")
-    resp = Response(local_resource, mimetype=resource.mime_type)
-    return resp
+    if resource:
+        basepath = app.config["upload_dir"]
+        filepath = os.path.join(basepath, resource.name)
+        local_resource = open(filepath, "rb")
+        resp = Response(local_resource, mimetype=resource.mime_type)
+        return resp
+    else:
+        return jsonify({"info": "resource not found"})
 
 
 @home.route("/upload", methods=["POST"])

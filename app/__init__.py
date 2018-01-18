@@ -1,5 +1,6 @@
 # -*- coding:utf-8 -*-
 from flask import Flask
+import pymysql
 from flask_cors import *
 import os
 
