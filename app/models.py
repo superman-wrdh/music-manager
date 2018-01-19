@@ -5,7 +5,10 @@ from datetime import datetime
 from app import app
 
 db = SQLAlchemy(app)
-resource_prefix = app.config["resource_api"]
+
+
+def fill_url(uuid):
+    return app.config["resource_api"]+uuid
 
 
 # 用户
@@ -33,9 +36,9 @@ class Music(db.Model):
             "title": self.title,
             "artist": self.artist,
             "album": self.album,
-            "cover": resource_prefix+self.cover,
-            "mp3": resource_prefix+self.mp3,
-            "img": resource_prefix+self.img
+            "cover": fill_url(self.cover),
+            "mp3": fill_url(self.mp3),
+            "img": fill_url(self.img)
         }
 
 
