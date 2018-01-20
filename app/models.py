@@ -1,6 +1,6 @@
 # -*- coding:utf-8 -*-
 from flask_sqlalchemy import SQLAlchemy
-from werkzeug.security import generate_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 from app import app
 
@@ -8,7 +8,7 @@ db = SQLAlchemy(app)
 
 
 def fill_url(uuid):
-    return app.config["resource_api"]+uuid
+    return app.config["resource_api"] + uuid
 
 
 # 用户
@@ -16,7 +16,19 @@ class User(db.Model):
     __tablename__ = "user"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), unique=True)
-    pwd = db.Column(db.String(100), unique=True)
+    mail = db.Column(db.String(32), unique=True)
+    password_hash = db.Column(db.String(100))
+
+    @property
+    def password(self):
+        return self.password
+
+    @password.setter
+    def password(self, pwd):
+        self.password_hash = generate_password_hash(pwd)
+
+    def verify_password(self, pwd):
+        return check_password_hash(self.password_hash,pwd)
 
 
 class Music(db.Model):
@@ -62,16 +74,6 @@ class Resource(db.Model):
         }
 
 
-def create_user():
-    user = User(
-        id=2,
-        name="hc2",
-        pwd=generate_password_hash("123456")
-    )
-    db.session.add(user)
-    db.session.commit()
-
-
 def create_table():
     db.create_all()
 
@@ -86,5 +88,17 @@ def get_music_list():
     print(music_list)
 
 
+def create_user():
+    user = User(
+        name="hc",
+        password="123456",
+        mail="hc@163.com"
+    )
+    db.session.add(user)
+    db.session.commit()
+
+
 if __name__ == '__main__':
-    get_music_list()
+    # create_user()
+    user = User.query.filter_by(id=1).first()
+    print(user.verify_password("123456"))

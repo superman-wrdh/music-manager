@@ -15,12 +15,6 @@ def index():
     return render_template("/home/index.html")
 
 
-def get_file_type(filename):
-    if filename.count(".") == 0:
-        return ""
-    return filename[filename.rindex("."):]
-
-
 @home.route("/resource/<rid>")
 def get_resource(rid):
     resource = Resource.query.filter_by(uuid=rid).first()
@@ -38,33 +32,10 @@ def get_resource(rid):
 def upload():
     f = request.files['file']
     file_info = save_file(f)
-
     return jsonify({"status": "success", "data": {"file": f.filename,
                                                   "mimetype": f.mimetype,
                                                   "uuid": file_info["uuid"]
                                                   }})
-
-
-def save_file(file):
-    upload_path = app.config["upload_dir"]
-    if not os.path.exists(upload_path):
-        os.makedirs(upload_path)
-        os.chmod(upload_path, "rw")
-    security_name = datetime.strftime(datetime.now(), "%Y%m%d%H%M%S%f") + "-" + str(uuid4()) + get_file_type(
-        file.filename)
-    uuid = str(uuid4())
-    resource = Resource(
-        uuid=uuid,
-        name=security_name,
-        original_file_name=file.filename,
-        mime_type=file.mimetype,
-        created_time=datetime.now()
-    )
-    db.session.add(resource)
-    db.session.commit()
-
-    file.save(os.path.join(upload_path, security_name))
-    return {"security_name": security_name, "mimetype": file.mimetype, "uuid": uuid}
 
 
 @home.route("/upload/music", methods=["POST"])
@@ -112,3 +83,31 @@ def upload_music():
 def music_list():
     music_list = [m.to_json() for m in Music.query.all()]
     return jsonify({"data": music_list})
+
+
+def save_file(file):
+    upload_path = app.config["upload_dir"]
+    if not os.path.exists(upload_path):
+        os.makedirs(upload_path)
+        os.chmod(upload_path, "rw")
+    security_name = datetime.strftime(datetime.now(), "%Y%m%d%H%M%S%f") + "-" + str(uuid4()) + get_file_type(
+        file.filename)
+    uuid = str(uuid4())
+    resource = Resource(
+        uuid=uuid,
+        name=security_name,
+        original_file_name=file.filename,
+        mime_type=file.mimetype,
+        created_time=datetime.now()
+    )
+    db.session.add(resource)
+    db.session.commit()
+
+    file.save(os.path.join(upload_path, security_name))
+    return {"security_name": security_name, "mimetype": file.mimetype, "uuid": uuid}
+
+
+def get_file_type(filename):
+    if filename.count(".") == 0:
+        return ""
+    return filename[filename.rindex("."):]
