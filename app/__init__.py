@@ -7,6 +7,7 @@ import os
 app = Flask(__name__)
 CORS(app, supports_credentials=True)
 app.debug = False
+app.config['SECRET_KEY'] = "hcissuperman666"
 app.config["upload_dir"] = os.path.join(os.path.abspath(os.path.dirname(__file__)), "static", "uploads")
 app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://root:superman@127.0.0.1:3306/music"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = True
