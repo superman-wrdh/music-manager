@@ -18,7 +18,7 @@ class User(db.Model):
     name = db.Column(db.String(100), unique=True)
     mail = db.Column(db.String(32), unique=True)
     password_hash = db.Column(db.String(100))
-    role_id = db.Column(db.Integer, db.ForeignKey('role.id'))
+    #role_id = db.Column(db.Integer, db.ForeignKey('role.id'))
 
     @property
     def password(self):
@@ -32,46 +32,46 @@ class User(db.Model):
         return check_password_hash(self.password_hash, pwd)
 
 
-class Role(db.Model):
-    __tablename__ = 'roles'
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(64), unique=True)
-    permissions = db.Column(db.Integer)
-    default = db.Column(db.Boolean, default=False, index=True)
-    users = db.relationship('User', backref='role', lazy='dynamic')
-
-    def __repr__(self):
-        return '<Role %r>' % self.name
-
-    @staticmethod
-    def insert_role():
-        # 这里需要注意的是‘|’的用法，以及python对各种进制的处理
-        roles = {
-            'User': (Permission.FOLLOW |
-                     Permission.COMMENT |
-                     Permission.WRITE_ARTICLES, True),
-            'Moderate': (Permission.FOLLOW |
-                         Permission.COMMENT |
-                         Permission.WRITE_ARTICLES |
-                         Permission.MODERATE_COMMENTS, False),
-            'Administrator': (0xff, False)
-        }
-        for r in roles:
-            role = Role.query.filter_by(name=r).first()
-            if role is None:
-                role = Role(name=r)
-            role.permissions = roles[r][0]
-            role.default = roles[r][1]
-            db.session.add(role)
-        db.session.commit()
-
-
-class Permission:
-    FOLLOW = 0x01
-    COMMENT = 0x02
-    WRITE_ARTICLES = 0x04
-    MODERATE_COMMENTS = 0x08
-    ADMINISTER = 0x80
+# class Role(db.Model):
+#     __tablename__ = 'roles'
+#     id = db.Column(db.Integer, primary_key=True)
+#     name = db.Column(db.String(64), unique=True)
+#     permissions = db.Column(db.Integer)
+#     default = db.Column(db.Boolean, default=False, index=True)
+#     users = db.relationship('User', backref='role', lazy='dynamic')
+#
+#     def __repr__(self):
+#         return '<Role %r>' % self.name
+#
+#     @staticmethod
+#     def insert_role():
+#         # 这里需要注意的是‘|’的用法，以及python对各种进制的处理
+#         roles = {
+#             'User': (Permission.FOLLOW |
+#                      Permission.COMMENT |
+#                      Permission.WRITE_ARTICLES, True),
+#             'Moderate': (Permission.FOLLOW |
+#                          Permission.COMMENT |
+#                          Permission.WRITE_ARTICLES |
+#                          Permission.MODERATE_COMMENTS, False),
+#             'Administrator': (0xff, False)
+#         }
+#         for r in roles:
+#             role = Role.query.filter_by(name=r).first()
+#             if role is None:
+#                 role = Role(name=r)
+#             role.permissions = roles[r][0]
+#             role.default = roles[r][1]
+#             db.session.add(role)
+#         db.session.commit()
+#
+#
+# class Permission:
+#     FOLLOW = 0x01
+#     COMMENT = 0x02
+#     WRITE_ARTICLES = 0x04
+#     MODERATE_COMMENTS = 0x08
+#     ADMINISTER = 0x80
 
 
 class Music(db.Model):
@@ -142,7 +142,7 @@ def create_user():
 
 
 if __name__ == '__main__':
-    # create_user()
-    user = User.query.filter_by(id=1).first()
-    print(user.verify_password("123456"))
+    create_table()
+    #user = User.query.filter_by(id=1).first()
+    #print(user.verify_password("123456"))
 
