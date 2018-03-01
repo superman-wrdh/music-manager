@@ -6,6 +6,7 @@ from functools import wraps
 from app.models import User
 
 
+# 暂时实现
 def admin_required(f):
     @wraps(f)
     def decorator(*args, **kwargs):
@@ -18,6 +19,16 @@ def admin_required(f):
             else:
                 abort(403)
     return decorator
+
+
+# 登录访问的后台地址简单实现
+def admin_login_req(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if "admin" not in session:
+            return redirect(url_for("admin.login", next=request.url))
+        return f(*args, **kwargs)
+    return decorated_function
 
 
 @admin.route("/")
@@ -50,4 +61,6 @@ def print_all_session():
         print(session[i])
         content.append(i)
     return "----"
+
+
 

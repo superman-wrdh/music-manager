@@ -1,13 +1,25 @@
 # -*- coding:utf-8 -*-
 from . import home
 from app.models import Music, Resource
-from flask import Flask, request, Response, jsonify, render_template, url_for
+from flask import Flask, request, Response, jsonify, render_template, url_for, redirect, session
 import os
 from app import app
+from functools import wraps
 from pprint import pprint
 from uuid import uuid4
 from datetime import datetime
 from app.models import db
+
+
+# 用户需要登录的资源访问控制
+def user_login_req(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if "user" not in session:
+            return redirect(url_for("home.login", next=request.url))
+        return f(*args, **kwargs)
+
+    return decorated_function
 
 
 @home.route("/")
